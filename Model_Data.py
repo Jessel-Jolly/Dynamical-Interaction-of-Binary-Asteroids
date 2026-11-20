@@ -37,12 +37,22 @@ def plot_model(vert, face, step=1, elev=0, axim=0, save=None):
     """
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
+
+
+
+    tris = vert[face[::step]] # Triangles
+
+    # Colors
+    n = np.cross(tris[:, 1] - tris[:, 0], tris[:, 2] - tris[:, 0]) # Normals
+    n= n/(np.linalg.norm(n, axis=1, keepdims=True) + 1e-12) # Normalizing Normals
+    light = np.array([0.5, -0.5, 0.7]) # Light direction
+    light = light / np.linalg.norm(light) # Normalizing Light
+    shade = 0.15 + 0.7 * np.clip(n @ light, 0, 1) # Shading Factor
+    colours = plt.cm.bone(shade) # Colour Mapping
     
     # Create a Poly3DCollection for the faces
-    poly3d = [[vert[vert_idx] for vert_idx in face[i]] for i in range(face.shape[0])]
-    collection = Poly3DCollection(poly3d, alpha=0.5, edgecolor='k')
-    
-    ax.add_collection3d(collection)
+    ax.add_collection3d(Poly3DCollection(tris, facecolors=colours,
+                                         edgecolors=colours, linewidths=0.1))
     
     # Set limits and labels
     ax.set_xlabel('X (km)')
@@ -56,11 +66,9 @@ def plot_model(vert, face, step=1, elev=0, axim=0, save=None):
     max_range = np.array([vert[:, 0].max()-vert[:, 0].min(), 
                           vert[:, 1].max()-vert[:, 1].min(), 
                           vert[:, 2].max()-vert[:, 2].min()]).max() / 2.0
-
-    mid_x = (vert[:, 0].max()+vert[:, 0].min()) * 0.5
-    mid_y = (vert[:, 1].max()+vert[:, 1].min()) * 0.5
-    mid_z = (vert[:, 2].max()+vert[:, 2].min()) * 0.5
-
+    mid_x = (vert[:, 0].max()+vert[:, 0].min())/2
+    mid_y = (vert[:, 1].max()+vert[:, 1].min())/2
+    mid_z = (vert[:, 2].max()+vert[:, 2].min())/2
     ax.set_xlim(mid_x - max_range, mid_x + max_range)
     ax.set_ylim(mid_y - max_range, mid_y + max_range)
     ax.set_zlim(mid_z - max_range, mid_z + max_range)
