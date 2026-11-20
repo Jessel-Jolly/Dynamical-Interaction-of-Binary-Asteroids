@@ -1,0 +1,66 @@
+PDS_VERSION_ID                     = PDS3                                     
+                                                                              
+RECORD_TYPE                        = "FIXED_LENGTH"                           
+RECORD_BYTES                       = 48                                       
+FILE_RECORDS                       = 775                                      
+                                                                              
+^TABLE                             = "imagelist.tab"                          
+                                                                              
+DATA_SET_ID                        = "HAY-A-AMICA-5-ITOKAWASHAPE-V1.0"        
+PRODUCT_NAME                       = "SHAPE MODEL IMAGE LIST"                 
+PRODUCT_ID                         = "IMAGELIST_TAB"                          
+INSTRUMENT_HOST_ID                 = "HAY"                                    
+INSTRUMENT_HOST_NAME               = "HAYABUSA"                               
+INSTRUMENT_ID                      = "AMICA"                                  
+INSTRUMENT_NAME                    = "ASTEROID MULTI-BAND IMAGING CAMERA"     
+TARGET_NAME                        = "25143 ITOKAWA"                          
+TARGET_TYPE                        = "ASTEROID"                               
+START_TIME                         = 2005-09-11T07:53:10                      
+STOP_TIME                          = 2005-11-12T05:10:57                      
+PRODUCT_CREATION_TIME              = 2008-07-18  /* File uploaded to OLAF */  
+                                                                              
+OBJECT                             = TABLE                                    
+ ROWS                              = 775                                      
+ ROW_BYTES                         = 48                                       
+ INTERCHANGE_FORMAT                = "ASCII"                                  
+ COLUMNS                           = 3                                        
+ DESCRIPTION                       = "A list of the Hayabusa AMICA images used
+        to generate the Gaskell Itokawa shape model, with observation times   
+        and range solutions."                                                 
+                                                                              
+ OBJECT                            = COLUMN                                   
+  COLUMN_NUMBER                    = 1                                        
+  NAME                             = "IMAGE_NAME"                             
+  DESCRIPTION                      = "The image name of the Hayabusa AMICA    
+        image"                                                                
+  DATA_TYPE                        = "CHARACTER"                              
+  START_BYTE                       = 1                                        
+  BYTES                            = 11                                       
+  FORMAT                           = "A11"                                    
+ END_OBJECT                        = COLUMN                                   
+                                                                              
+ OBJECT                            = COLUMN                                   
+  COLUMN_NUMBER                    = 2                                        
+  NAME                             = "IMAGE_OBS_TIME"                         
+  DESCRIPTION                      = "The observation end time of the image.  
+        The AMICA image times have a maximum uncertainty of +/- 12 seconds as 
+        reported by the AMICA team."                                          
+  DATA_TYPE                        = "TIME"                                   
+  START_BYTE                       = 13                                       
+  BYTES                            = 23                                       
+  FORMAT                           = "A23"                                    
+ END_OBJECT                        = COLUMN                                   
+                                                                              
+ OBJECT                            = COLUMN                                   
+  COLUMN_NUMBER                    = 3                                        
+  NAME                             = "RANGE"                                  
+  DESCRIPTION                      = "Range solution for the image"           
+  UNIT                             = "KILOMETER"                              
+  DATA_TYPE                        = "ASCII_REAL"                             
+  START_BYTE                       = 37                                       
+  BYTES                            = 10                                       
+  FORMAT                           = "E10.4"                                  
+ END_OBJECT                        = COLUMN                                   
+                                                                              
+END_OBJECT                         = TABLE                                    
+END                                                                           

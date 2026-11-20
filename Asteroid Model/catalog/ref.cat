@@ -1,0 +1,146 @@
+PDS_VERSION_ID                     = PDS3                                     
+RECORD_TYPE                        = "STREAM"                                 
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "ABEETAL2006"                            
+  REFERENCE_DESC                   = "Abe, S., T. Mukai, N. Hirata, O.S.      
+        Barnouin-Jha, A.F. Cheng, and 11 others, Near-infrared spectral       
+        results of asteroid Itokawa from the Hayabusa spacecraft, Science 312,
+        1334-1338, 2006."                                                     
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "ABELLETAL2007"                          
+  REFERENCE_DESC                   = "Abell, P. A., F. Vilas, M. J. Gaffey, K.
+        S. Jarvis, and M. S. Kelley, Mineralogical Composition of (25143)     
+        Itokawa 1998 SF36 from Visible and Near-Infrared Reflectance          
+        Spectroscopy: Evidence for Partial Melting,  Meteoritics and Planetary
+        Science, 42, 2165-2177, 2007."                                        
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "BINZELETAL2001"                         
+  REFERENCE_DESC                   = "Binzel, R.P., A.S. Rivkin, S.J. Bus,    
+        J.M. Sunshine, T.H. Burbine, MUSES-C target asteroid (25143) 1998     
+        SF36: A reddened ordinary chondrite, Meteoritics and Planetary Science
+        36, 1167-1172, 2001.  "                                               
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "DEMURAETAL2006"                         
+  REFERENCE_DESC                   = "Demura, H., S. Kobayashi, E. Nemoto, N. 
+        Matsumoto, M. Furuya, and 15 others, Pole and global shape of 25143   
+        Itokawa, Science 312, 1347-1349, 2006."                               
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "FUJIWARAETAL2006"                       
+  REFERENCE_DESC                   = "Fujiwara, A., J. Kawaguchi, D.K.        
+        Yeomans, M. Abe, T. Mukai, and 17 others, The rubble-pile asteroid    
+        Itokawa as observed by Hayabusa, Science 312, 1330-1334, 2006."       
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "GASKELL2005"                            
+  REFERENCE_DESC                   = "Gaskell R.W., Landmark navigation and   
+        target characterization in a simulated Itokawa encounter, AAS paper   
+        05-289, AAS/AIAA Astrodynamics Specialists Conf., Lake Tahoe, CA,     
+        2005."                                                                
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "GASKELLETAL2006"                        
+  REFERENCE_DESC                   = "Gaskell R., O. Barnouin-Jha, D.         
+        Scheeres, T. Mukai, N. Hirata, S. Abe, J. Saito, M. Ishiguro, T.      
+        Kubota, T. Hashimoto, J. Kawaguchi, M. Yoshikawa, K. Shirakawa, T.    
+        Kominato, Landmark navigation studies and target characterization in  
+        the Hayabusa encounter with Itokawa,  AIAA paper 2006-6660, AAS/AIAA  
+        Astrodynamics Specialists Conf., Keystone, CO, 2006."                 
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "GASKELLETAL2006B"                       
+  REFERENCE_DESC                   = "Gaskell R.W., J. Saito, M. Ishiguro, T. 
+        Kubota, T. Hashimoto, N. Hirata, S. Abe, O. Barnouin-Jha, and D.      
+        Scheeres, Global topography of asteroid 25143 Itokawa, Abstract 1876, 
+        37th Lunar and Planetary Science Conference, 2006."                   
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "ISHIGUROETAL2008"                       
+  REFERENCE_DESC                   = "Ishiguro, M., R. Nakamura, D.J. Tholen, 
+        N. Hirata, H. Demura, and 10 others, Calibration and performance of   
+        the Asteroid Multi-band Imaging Camera (AMICA) onboard Hayabusa       
+        spacecraft, submitted to Icarus, 2008.  "                             
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "KUNINAKAETAL2007"                       
+  REFERENCE_DESC                   = "Kuninaka, Hitoshi, K. Nishiyama, Y.     
+        Shimizu, T. Yamada, and H. Koizumi, Re-ignition of Microwave Discharge
+        Ion Engines on Hayabusa for Homeward Journey, The 30th International  
+        Electric Propulsion Conference, Florence, Italy, Sept. 17-20, 2007.   
+                                                                              
+        "                                                                     
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "MUKAIETAL2007"                          
+  REFERENCE_DESC                   = "Mukai, T., S. Abe, N. Hirata, R.        
+        Nakamura, O.S. Barnouin-Jha, and 11 others, An overview of the LIDAR  
+        observations of asteroid 25143 Itokawa.  Advances in Space Research   
+        40, 187-192, 2007."                                                   
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "NAKAMURAETAL2001"                       
+  REFERENCE_DESC                   = "Nakamura, T., A.M. Nakamura, J. Saito,  
+        S. Sasaki, R. Nakamura, and three others, plus the AMICA team.        
+        Multi-band imaging camera and its sciences for the Japanese near-earth
+        asteroid mission MUSES-C.  Earth, Planets, Space 53, 1047-1063, 2001."
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "OKADAETAL2006"                          
+  REFERENCE_DESC                   = "Okada, T., K. Shirai, Y. Yamamoto, T.   
+        Arai, K. Ogawa, and 2 others, X-ray fluorescence spectrometry of      
+        asteroid Itokawa by Hayabusa.  Science 312, 1338-1341, 2006."         
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "OSTROETAL2004"                          
+  REFERENCE_DESC                   = "Ostro, S.J., L.A.M. Benner, M.C. Nolan, 
+        C. Magri, J.D. Giorgini, and 11 others, Radar observations of asteroid
+        25143 Itokawa (1998 SF36), Meteoritics and Planetary Science 39,      
+        407-424, 2004."                                                       
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "SAITOETAL2006"                          
+  REFERENCE_DESC                   = "Saito, J., H. Miyamoto, R. Nakamura, M. 
+        Ishiguro, T. Michikami, and 29 others, Detailed images of asteroid    
+        25143 Itokawa from Hayabusa, Science 312, pp. 1341-1344, 2006."       
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "SEKIGUICHIETAL2001"                     
+  REFERENCE_DESC                   = "Sekiguichi, T., M. Sterzik, N. Ageorges,
+        and O. Hainaut, IAU Circular 7598 (dated 2001 March 10), 2001"        
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "TEDESCOETAL1982"                        
+  REFERENCE_DESC                   = "Tedesco, E.F., D.J. Tholen, and B.      
+        Zellner, The eight-color asteroid survey: Standard stars, The         
+        Astronomical Journal 87, 11:1585-1592, 1982."                         
+END_OBJECT                         = REFERENCE                                
+                                                                              
+OBJECT                             = REFERENCE                                
+  REFERENCE_KEY_ID                 = "YANOETAL2006"                           
+  REFERENCE_DESC                   = "Yano, H., T. Kubota, M. Miyamoto, T.    
+        Okada, D. Scheeres, and 15 others, Touchdown of the Hayabusa          
+        spacecraft at the Muses Sea on Hayabusa, Science 312, 1350-1353,      
+        2006."                                                                
+END_OBJECT                         = REFERENCE                                
+                                                                              
+END                                                                           

@@ -1,0 +1,17 @@
+PDS_VERSION_ID                     = PDS3                                     
+RECORD_TYPE                        = "STREAM"                                 
+DATA_SET_ID                        = "HAY-A-AMICA-5-ITOKAWASHAPE-V1.0"        
+                                                                              
+^DOCUMENT                          = "icqmodel.asc"                           
+                                                                              
+OBJECT                             = DOCUMENT                                 
+   DOCUMENT_NAME                   = "DESCRIPTION OF ICQ FORMAT"              
+   PUBLICATION_DATE                = 2008-09-15 /* Label Generated */         
+   DOCUMENT_TOPIC_TYPE             = "FORMAT DESCRIPTION"                     
+   INTERCHANGE_FORMAT              = "ASCII"                                  
+   DOCUMENT_FORMAT                 = "TEXT"                                   
+   DESCRIPTION                     = "This document contains a description of 
+        the Implicitly Connected Quadrilateral (ICQ) format of the Gaskell    
+        Itokawa shape models.  The author is Robert Gaskell."                 
+END_OBJECT                         = DOCUMENT                                 
+END                                                                           

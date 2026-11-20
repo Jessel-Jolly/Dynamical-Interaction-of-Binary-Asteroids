@@ -1,0 +1,30 @@
+PDS_VERSION_ID                     = PDS3                                     
+RECORD_TYPE                        = STREAM                                   
+                                                                              
+OBJECT                             = TEXT                                     
+   PUBLICATION_DATE                = 2008-09-15  /* Label Generated */        
+   NOTE                            = "Description of the contents of the      
+        document directory."                                                  
+END_OBJECT                         = TEXT                                     
+END                                                                           
+                                                                              
+"document" Directory Contents                                                 
+                                                                              
+The document directory contains documentation files, where available, for the 
+data set in this volume.  All document files will have an accompanying label  
+file to describe content and structure.  Label files have the same name as the
+main document file, with an extension of ".lbl".                              
+                                                                              
+docinfo.txt -  The file you are reading.                                      
+                                                                              
+ads.asc -  The file sent to Abstract Data Service (ADS).                      
+                                                                              
+ads.lbl -  The label for ads.asc.                                             
+                                                                              
+                                                                              
+icqmodel.asc -  "Description of ICQ Format", This document contains a         
+        description of the Implicitly Connected Quadrilateral (ICQ) format of 
+        the Gaskell Itokawa shape models.  The author is Robert Gaskell.      
+                                                                              
+icqmodel.lbl - The label file for the document "Description of ICQ Format"    
+        described above.                                                      
