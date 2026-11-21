@@ -1,0 +1,247 @@
+import numpy as np
+
+from ellipsoid import euler_matrix
+
+# Parameter layout, one ellipsoid = 9 numbers:
+#   [rx, ry, rz, cx, cy, cz, roll, pitch, yaw]   (km, km, radians)
+# Two ellipsoids -> a flat vector of 18 numbers.
+
+
+def pack(r1, c1, a1, r2, c2, a2):
+    """ Packs parameters of two ellipsoids into a singular vector.
+
+    Args:
+        r1 (ndarray): (3x1) array of semi-axes of ellipsoid 1 (km).
+        c1 (ndarray): (3x1) array of centre coordinates of ellipsoid 1 (km).
+        a1 (ndarray): (3x1) array of Euler angles of ellipsoid 1 (radians).
+        r2 (ndarray): (3x1) array of semi-axes of ellipsoid 2 (km).
+        c2 (ndarray): (3x1) array of centre coordinates of ellipsoid 2 (km).
+        a2 (ndarray): (3x1) array of Euler angles of ellipsoid 2 (radians).
+
+    Returns:
+        ndarray: full 18-vector for parameters of both ellipsese.
+    """
+    return np.concatenate([r1, c1, a1, r2, c2, a2]).astype(float)
+
+
+def unpack(p):
+    """ Unpacks paramater vectors into two constituent ellipsoids.
+
+    Args:
+        p (ndarray): 18-element vector of ellipsoid parameters.
+
+    Returns:
+        tuple: Two 9-element vectors of ellipsoid parameters.
+    """
+    return np.asarray(p, float)[:9], np.asarray(p, float)[9:]
+
+
+def ellipsoid_distance(points, e):
+    """ Signed distance of points from surface of single ellipsoid using first order Sampson approximation.
+
+    Args:
+        points (ndarray): points to measure distance from.
+        e (ndarray): ellipsoid parameters.
+
+    Returns:
+        ndarray: signed distance of each point from ellipsoid surface.
+    """
+    r, c, ang = e[:3], e[3:6], e[6:9]
+    R = euler_matrix(*ang)
+    q = ((points - c) @ R) / r                 # points in the ellipsoid's own unit-sphere frame
+    f = np.maximum(np.linalg.norm(q, axis=1), 1e-9)
+    grad = np.linalg.norm(q / r, axis=1) / f   # |gradient of f| in real space
+    return (f - 1.0) / grad
+
+
+def residuals(p, points):
+    """ Signed minimum distance of points from both ellipsoids
+
+    Args:
+        p (ndarray): 18-element vecotr of ellipsoid parameters from both ellipsoids.
+        points (ndarray): points to measure distance from.
+
+    Returns:
+        ndarray: signed minimum distance of each point from both ellipsoids.
+    """
+
+    e1, e2 = unpack(p)
+    return np.minimum(ellipsoid_distance(points, e1), ellipsoid_distance(points, e2))
+
+
+def unit_ball_samples(n, seed=0):
+    """ Generates random points across unit ball to be scalled to ellipsoids.
+
+    Args:
+        n (int): number of points to generate
+        seed (int, optional): Seed for random number generator. Defaults to 0.
+
+    Returns:
+        ndarray: points uniformly distributed within the unit ball.
+    """
+    rng = np.random.default_rng(seed)
+    u = rng.normal(size=(n, 3))
+    u /= np.linalg.norm(u, axis=1, keepdims=True)
+    return u * rng.random(n)[:, None] ** (1 / 3)
+
+
+def overlap_fraction(p, unit_pts=None, smooth=1e-3):
+    """ Using random points along ellipsoids, what fraction of the small ellipsoid is inside the large.
+
+    Args:
+        p (ndarray): 18-element vecotr of ellipsoid parameters from both ellipsoids.
+        unit_pts (ndarray, optional): Predefine points along unit sphere. Defaults to None.
+        smooth (float, optional): Edge softness in units of the ellipsoid radius. Defaults to 1e-3.
+
+    Returns:
+        float: Fraction of the small ellipsoid that is inside the large one.
+    """
+    if unit_pts is None:
+        unit_pts = unit_ball_samples(20000)
+    e1, e2 = unpack(p)
+    small, big = (e1, e2) if np.prod(e1[:3]) <= np.prod(e2[:3]) else (e2, e1)
+    x = small[3:6] + (unit_pts * small[:3]) @ euler_matrix(*small[6:9]).T   # points inside small
+    f = np.linalg.norm(((x - big[3:6]) @ euler_matrix(*big[6:9])) / big[:3], axis=1)
+    return float(np.mean(1.0 / (1.0 + np.exp(np.clip((f - 1.0) / smooth, -50, 50)))))
+
+
+def jacobian(fun, p, r0):
+    """ Finite differences Jacobian matrix for residual function.
+
+    Args:
+        fun (function): Residual function.
+        p (ndarray): 18-element vecotr of ellipsoid parameters from both ellipsoids.
+        r0 (ndarray): Current residuals for parameters p.
+
+    Returns:
+        J (ndarray): Jacobian matrix.
+    """ 
+    h = np.tile([1e-4] * 6 + [1e-3] * 3, 2)           # km for radii/centres, rad for angles
+    J = np.empty((len(r0), 18))
+    for k in range(18):
+        q = p.copy()
+        q[k] += h[k]
+        J[:, k] = (fun(q) - r0) / h[k]
+    return J
+
+
+def fit_two_ellipsoids(vert, p0, n_iter=60, damping=0.5, vert_step=2,
+                       f_scale=0.005, tol=1e-3, max_move=0.02, max_turn=0.1,
+                       overlap_penalty=0.0, overlap_samples=5000, overlap_smooth=0.05,
+                       verbose=True):
+    """ Itteratively refines ellipsoid paramerters.
+
+    Args:
+        vert (ndarray): Vertices of model (km).
+        p0 (ndarray): Initial parameter guess for ellipsoids.
+        n_iter (int, optional): Maximum number of iterations. Defaults to 60.
+        damping (float, optional): Damping factor correlating to fraction of step size. Defaults to 0.5.
+        vert_step (int, optional): Vertices step size to increase speed. Defaults to 2.
+        f_scale (float, optional): Cutoff for outlier vertices to handle boulders (km). Defaults to 0.005.
+        tol (float, optional): Convergence tolerence. Defaults to 1e-3.
+        max_move (float, optional): Maximum translation per iteration (km). Defaults to 0.02.
+        max_turn (float, optional): Maximum rotation per iteration (radians). Defaults to 0.1.
+        overlap_penalty (float, optional): Factor for penalising overlap (Order of 10s). Defaults to 0.0.
+        overlap_samples (int, optional): Number of samples on unit sphere. Defaults to 5000.
+        overlap_smooth (float, optional): Edge softening parameter. Defaults to 0.05.
+        verbose (bool, optional): Whether iteration data is printed. Defaults to True.
+
+    Returns:
+        p (ndarray): Refined ellipsoid parameters.
+        history (list): List of tuples of parameters and RMS error per iteration.
+    """
+
+    pts = vert[::vert_step]
+    n_pts = len(pts)
+    unit = unit_ball_samples(overlap_samples)
+    p = np.asarray(p0, float).copy()
+    k_ov = np.sqrt(overlap_penalty * n_pts) * f_scale  # scales phi into a residual
+
+    def full(q):                                       # vertex residuals + overlap residual
+        rv = residuals(q, pts)
+        if overlap_penalty > 0:
+            rv = np.append(rv, k_ov * overlap_fraction(q, unit, overlap_smooth))
+        return rv
+
+    def cost(r):                                       # robust vertex cost + plain overlap cost
+        rv = r[:n_pts]
+        c = np.sum(2 * f_scale**2 * (np.sqrt(1 + (rv / f_scale) ** 2) - 1))
+        return c + np.sum(r[n_pts:] ** 2)
+
+    def rms_of(q):
+        return np.sqrt(np.mean(residuals(q, pts) ** 2))
+
+    def report(i, q):
+        msg = f"iter {i:2d}  rms = {rms_of(q)*1000:7.3f} m"
+        msg += f"   overlap = {100*overlap_fraction(q, unit, 1e-3):5.1f} %"
+        print(msg)
+
+    r = full(p)
+    history = [(p.copy(), rms_of(p))]
+    lam = 1e-2                                         # LM damping
+    if verbose:
+        report(0, p)
+
+    for i in range(1, n_iter + 1):
+        w = np.ones(len(r))
+        w[:n_pts] = 1.0 / np.sqrt(1 + (r[:n_pts] / f_scale) ** 2)   # robust weights (vertices only)
+        J = jacobian(full, p, r)
+        JtWJ = J.T @ (w[:, None] * J)
+        g = J.T @ (w * r)
+        c0 = cost(r)
+
+        for dummy in range(20):                            # raise lam until the step actually helps
+            A = JtWJ + lam * np.diag(np.diag(JtWJ) + 1e-9) + 1e-12 * np.eye(18)
+            step = -np.linalg.solve(A, g)
+            limit = np.tile([max_move] * 6 + [max_turn] * 3, 2)
+            p_new = p + np.clip(damping * step, -limit, limit)      # cap per-iteration jump
+            p_new[[0, 1, 2, 9, 10, 11]] = np.maximum(p_new[[0, 1, 2, 9, 10, 11]], 0.01)
+            r_new = full(p_new)
+            if cost(r_new) < c0:
+                lam = max(lam / 3, 1e-6)
+                break
+            lam *= 4
+        else:
+            if verbose: print("no improving step found - converged")
+            break
+
+        improvement = (c0 - cost(r_new)) / c0
+        p, r = p_new, r_new
+        history.append((p.copy(), rms_of(p)))
+        if verbose:
+            report(i, p)
+        if improvement < tol:
+            break
+    return p, history
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+
+    from ellipsoid import plot_ellipsoid
+    from Model_Data import load_data, plot_model
+
+    save = False
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    vert, face = load_data("Asteroid_Model/data/vertex/ver64q.tab")
+
+    p0 = pack(r1=[0.22, 0.15, 0.1],   c1=[-0.06, 0, 0],      a1=np.deg2rad([0, -7, -13]),
+              r2=[0.105, 0.09, 0.085], c2=[0.21, 0, -0.027], a2=np.deg2rad([0, 55, 0]))
+
+    p, history = fit_two_ellipsoids(vert, p0,
+                                    n_iter=30,       # hard cap on iterations
+                                    damping=0.3,     # take 30% of each step
+                                    max_move=0.01,   # at most 10 m per iteration (radii/centres)
+                                    max_turn=0.05,   # at most ~3 degrees per iteration (angles)
+                                    overlap_penalty=30) # penalise overlap
+    e1, e2 = unpack(p)      # each is [rx, ry, rz, cx, cy, cz, roll, pitch, yaw]
+    np.savetxt("ellipsoids.csv", [e1,e2], delimiter=",", header="rx,ry,rz,cx,cy,cz,roll,pitch,yaw")
+
+    plot_ellipsoid(*e1, ax=ax, show=False, color="b", alpha=0.6)
+    plot_ellipsoid(*e2, ax=ax, show=False, color="r", alpha=0.6)
+    plot_model(vert, face, step=1, elev=20, axim=45, shade=False, ax=ax, show=False, alpha=0.3)
+    
+    if save:
+        np.savetxt("ellipsoids.csv", [e1,e2], delimiter=",", header="rx,ry,rz,cx,cy,cz,roll,pitch,yaw")
+        plt.savefig("ellipsoids.png")
+    plt.show()
