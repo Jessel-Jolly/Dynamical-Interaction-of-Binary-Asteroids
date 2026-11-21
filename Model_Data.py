@@ -24,7 +24,7 @@ def load_data(file_path):
         print(f"Error loading data from {file_path}: {e}")
         return None
 
-def get_model(vert, fac, step=1, shade=True, light=[0.5, -0.5, 0.7]):
+def get_model(vert, face, step=1, shade=True, light=[0.5, -0.5, 0.7], **kwargs):
     """
     Creates 3D model from vertex and face data.
     
@@ -34,12 +34,15 @@ def get_model(vert, fac, step=1, shade=True, light=[0.5, -0.5, 0.7]):
     step (int): Step size for plotting vertices.
     shade (bool): Whether to apply shading based on light direction.
     light (list): The light direction vector.
+    **kwargs: Model plotting additional arguments.
     
     Returns:
     collection (Poly3DCollection): A Poly3DCollection object representing the 3D model.
     """
     tris = vert[face[::step]] # Triangles
 
+    defaults = {"linewidth": 0.1, "edgecolor": 'k', "facecolor": 'lightgrey', "alpha": 1.0}
+    defaults.update(kwargs)
     # Colors
     if shade:
         n = np.cross(tris[:, 1] - tris[:, 0], tris[:, 2] - tris[:, 0]) # Normals
@@ -47,16 +50,18 @@ def get_model(vert, fac, step=1, shade=True, light=[0.5, -0.5, 0.7]):
         light = np.array(light) # Light direction
         light = light / np.linalg.norm(light) # Normalizing Light
         shade = 0.15 + 0.7 * np.clip(n @ light, 0, 1) # Shading Factor
-        colours = plt.cm.bone(shade) # Colour Mapping
-
-        collection = Poly3DCollection(tris, facecolors=colours, edgecolors=colours, linewidths=0.1)
+        colours = plt.get_cmap(defaults.pop("cmap", "bone"))(shade) # Colour mapping
+        colours[:, 3] = defaults["alpha"]
+        defaults["facecolor"] = colours
+        defaults["edgecolor"] = colours
+        collection = Poly3DCollection(tris, **defaults)
         return collection
     else:
-        collection = Poly3DCollection(tris, facecolors='lightgrey', edgecolors='k', linewidths=0.1)
+        collection = Poly3DCollection(tris, **defaults)
         return collection
 
 
-def plot_model(vert, face, step=1, elev=0, axim=0, shade=True, light=[0.5, -0.5, 0.7], save=None):
+def plot_model(vert, face, step=1, elev=0, axim=0, shade=True, light=[0.5, -0.5, 0.7], ax=None, show=True, save=None, **kwargs):
     """
     Plot a 3D model using vertex and face data.
 
@@ -68,13 +73,17 @@ def plot_model(vert, face, step=1, elev=0, axim=0, shade=True, light=[0.5, -0.5,
     axim (float): Azimuth angle in the x,y plane.
     shade (bool): Whether to apply shading based on light direction.
     light (list): The light direction vector.
+    ax (plt.axes): Matplotlib axes object to plot on. If None, a new figure and axes are created.
+    show (bool): Whether to display the plot. If False, the plot is not shown.
     save (str): Path to save the plot. If None, the plot is shown instead.
+    **kwargs: Model plotting additional arguments.
     """
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    if ax is None:
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
 
     # Create a Poly3DCollection for the faces
-    ax.add_collection3d(get_model(vert, face, step=step, shade=shade, light=light))
+    ax.add_collection3d(get_model(vert, face, step=step, shade=shade, light=light, **kwargs))
     
     # Set limits and labels
     ax.set_xlabel('X (km)')
@@ -98,9 +107,10 @@ def plot_model(vert, face, step=1, elev=0, axim=0, shade=True, light=[0.5, -0.5,
     if save:
         plt.savefig(save)
         print(f"Plot saved to {save}")
-    plt.show()
+    if show:
+        plt.show()
 
 if __name__ == "__main__":
     Path = "Asteroid_Model/data/vertex/ver64q.tab"
     vert, face = load_data(Path)
-    plot_model(vert, face, step=1, elev=20, axim=45, shade=False)
+    plot_model(vert, face, step=1, elev=20, axim=45, shade=True)
